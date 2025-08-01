@@ -258,7 +258,7 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { open, toggleSidebar } = useSidebar();
+  const { open, toggleSidebar, isMobile } = useSidebar();
 
   return (
     <Button
@@ -269,7 +269,8 @@ function SidebarTrigger({
       className={cn(
         "size-7",
         className,
-        open ? "custom-left-arrow-cursor" : "custom-right-arrow-cursor"
+        open ? "custom-left-arrow-cursor" : "custom-right-arrow-cursor",
+        isMobile && "custom-right-arrow-cursor"
       )}
       onClick={(event) => {
         onClick?.(event);

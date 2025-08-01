@@ -5,14 +5,13 @@ import {
   ChartPie,
   Blocks,
   Command,
-  Frame,
   LifeBuoy,
-  Map,
-  PieChart,
+  History,
   Send,
   ArrowLeftRight,
   ChartColumn,
   Wallet,
+  CalendarDays,
 } from "lucide-react";
 
 import {
@@ -78,19 +77,14 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Calendar",
+      url: "/calendar",
+      icon: CalendarDays,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "History",
+      url: "/history",
+      icon: History,
     },
   ],
 };
