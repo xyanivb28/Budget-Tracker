@@ -1,4 +1,3 @@
-// app/(navigation)/layout.tsx
 "use client";
 
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
@@ -20,6 +19,7 @@ export default function NavigationLayout({
   return (
     <>
       <SignedIn>
+        {/* We need to render this conditionally, if user has created his settings than forward him to the dashboard, if did not, redirect him to wizard page */}
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>

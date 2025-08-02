@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {
-  ChartPie,
+  UserCog,
   Blocks,
   Command,
   LifeBuoy,
@@ -53,9 +53,9 @@ const data = {
       icon: Blocks,
     },
     {
-      title: "Balance",
-      url: "/balance",
-      icon: ChartPie,
+      title: "Manage",
+      url: "/manage",
+      icon: UserCog,
     },
     {
       title: "Accounts",
