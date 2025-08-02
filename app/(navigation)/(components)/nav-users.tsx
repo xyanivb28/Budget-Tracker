@@ -19,13 +19,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useUser, SignOutButton } from "@clerk/nextjs";
-import UserProfileDialog from "@/components/UserProfileDialog";
-import { useState } from "react";
+import UserProfileDialog from "./UserProfileDialog";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user, isLoaded } = useUser();
-  const [userProfileDialogOpen, setUserProfileDialogOpen] = useState(false);
+  const { user } = useUser();
 
   const avatar = user?.imageUrl || "/avatars/shadcn.jpg";
   const name =
@@ -33,12 +31,6 @@ export function NavUser() {
   const email =
     user?.emailAddresses?.[0]?.emailAddress || "no-email@example.com";
   const initials = user?.firstName?.[0]?.toUpperCase() || "GU";
-
-  const handleProfileClick = () => {
-    if (isLoaded) {
-      setUserProfileDialogOpen((prev) => !prev);
-    }
-  };
 
   return (
     <>
@@ -88,13 +80,17 @@ export function NavUser() {
               <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => handleProfileClick()}
-                >
-                  <BadgeCheck className="mr-2 h-4 w-4" />
-                  Account
-                </DropdownMenuItem>
+                <UserProfileDialog
+                  trigger={
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <BadgeCheck className="mr-2 h-4 w-4" />
+                      Account
+                    </DropdownMenuItem>
+                  }
+                />
               </DropdownMenuGroup>
 
               <DropdownMenuSeparator />
@@ -109,11 +105,6 @@ export function NavUser() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-
-      <UserProfileDialog
-        open={userProfileDialogOpen}
-        onOpenChange={handleProfileClick}
-      />
     </>
   );
 }

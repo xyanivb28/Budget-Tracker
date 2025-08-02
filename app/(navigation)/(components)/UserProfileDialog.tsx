@@ -1,15 +1,21 @@
-import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ReactNode } from "react";
 import { UserProfile } from "@clerk/nextjs";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  trigger: ReactNode;
 }
 
-export default function UserProfileDialog({ open, onOpenChange }: Props) {
+export default function UserProfileDialog({ trigger }: Props) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         className="p-0 inline-block"
         style={{ width: "auto", maxWidth: "none" }}
