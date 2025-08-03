@@ -200,12 +200,12 @@ export default function CreateCategoryDialog({
               Cancel
             </Button>
           </DialogClose>
-          <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending}>
-            {isPending ? (
-              <Loader2 className="animate-spin cursor-pointer" />
-            ) : (
-              "Create"
-            )}
+          <Button
+            className="cursor-pointer"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isPending}
+          >
+            {isPending ? <Loader2 className="animate-spin" /> : "Create"}
           </Button>
         </DialogFooter>
       </DialogContent>

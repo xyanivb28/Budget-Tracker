@@ -85,6 +85,9 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
 
       setOpen((prev) => !prev);
     },
+    onError: () => {
+      toast.error("Something went wrong", { id: "create-transaction" });
+    },
   });
 
   const onSubmit = useCallback(
@@ -228,12 +231,12 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
               Cancel
             </Button>
           </DialogClose>
-          <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending}>
-            {isPending ? (
-              <Loader2 className="animate-spin cursor-pointer" />
-            ) : (
-              "Create"
-            )}
+          <Button
+            className="cursor-pointer"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isPending}
+          >
+            {isPending ? <Loader2 className="animate-spin " /> : "Create"}
           </Button>
         </DialogFooter>
       </DialogContent>
