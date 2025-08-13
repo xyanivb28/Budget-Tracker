@@ -1,3 +1,5 @@
+import { MAX_DATE_RANGE_DAYS } from "@/lib/constants";
+import { differenceInDays } from "date-fns";
 import z from "zod";
 
 export const CreateCategorySchema = z.object({
@@ -7,3 +9,21 @@ export const CreateCategorySchema = z.object({
 });
 
 export type CreateCategorySchemaType = z.infer<typeof CreateCategorySchema>;
+
+export const CategoriesStatsQuerySchema = z
+  .object({
+    type: z.enum(["income", "expense"]),
+    from: z.coerce.date(),
+    to: z.coerce.date(),
+  })
+  .refine((args) => {
+    const { from, to } = args;
+    const days = differenceInDays(to, from);
+
+    const isValidRange = days > 0 && days < MAX_DATE_RANGE_DAYS;
+    return isValidRange;
+  });
+
+export type CategoriesStatsQuerySchemaType = z.infer<
+  typeof CategoriesStatsQuerySchema
+>;

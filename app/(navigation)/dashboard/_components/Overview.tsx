@@ -7,6 +7,7 @@ import { useState } from "react";
 import { MAX_DATE_RANGE_DAYS } from "@/lib/constants";
 import { toast } from "sonner";
 import StatsCards from "./StatsCards";
+import CategoriesCard from "./CategoriesCard";
 
 interface Props {
   userSettings: UserSettings;
@@ -50,6 +51,11 @@ export default function Overview({ userSettings }: Props) {
         />
       </header>
       <StatsCards
+        userSettings={userSettings}
+        from={dateRange.from}
+        to={dateRange.to}
+      />
+      <CategoriesCard
         userSettings={userSettings}
         from={dateRange.from}
         to={dateRange.to}

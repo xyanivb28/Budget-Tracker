@@ -20,6 +20,7 @@ import { CommandEmpty } from "cmdk";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import CreateCategoryDialog from "./CreateCategoryDialog";
+import SkeletonWrapper from "@/components/SkeletonWrapper";
 
 interface Props {
   type: TransactionType;
@@ -84,27 +85,29 @@ export default function CategoryPicker({ type, onChange }: Props) {
                 Tip: try creating a category
               </p>
             </CommandEmpty>
-            <CommandList>
-              {categories.data &&
-                categories.data?.map((category: Category) => (
-                  <CommandItem
-                    key={category.name}
-                    onSelect={() => {
-                      setValue(category.name);
-                      setOpen((prev) => !prev);
-                    }}
-                    className="flex flex-row justify-between"
-                  >
-                    <CategoryRow category={category} />
-                    <Check
-                      className={cn(
-                        "mr-2 w-4 h-4 opacity-0",
-                        value === category.name && "opacity-100"
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-            </CommandList>
+            <SkeletonWrapper isLoading={categories.isFetching}>
+              <CommandList>
+                {categories.data &&
+                  categories.data?.map((category: Category) => (
+                    <CommandItem
+                      key={category.name}
+                      onSelect={() => {
+                        setValue(category.name);
+                        setOpen((prev) => !prev);
+                      }}
+                      className="flex flex-row justify-between"
+                    >
+                      <CategoryRow category={category} />
+                      <Check
+                        className={cn(
+                          "mr-2 w-4 h-4 opacity-0",
+                          value === category.name && "opacity-100"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+              </CommandList>
+            </SkeletonWrapper>
           </CommandGroup>
         </Command>
       </PopoverContent>

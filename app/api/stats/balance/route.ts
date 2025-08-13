@@ -46,10 +46,17 @@ async function getBalanceStats(userId: string, from: Date, to: Date) {
     _sum: {
       amount: true,
     },
+    _count: {
+      _all: true,
+    },
   });
 
   return {
     expense: totals.find((t) => t.type === "expense")?._sum.amount || 0,
+    expensesTransactionsAmount:
+      totals.find((t) => t.type === "expense")?._count._all || 0,
     income: totals.find((t) => t.type === "income")?._sum.amount || 0,
+    incomesTransactionsAmount:
+      totals.find((t) => t.type === "income")?._count._all || 0,
   };
 }

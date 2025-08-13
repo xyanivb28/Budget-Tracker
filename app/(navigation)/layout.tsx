@@ -34,7 +34,9 @@ export default function NavigationLayout({
               </Breadcrumb>
             </div>
           </header>
-          <main className="p-4">{children}</main>
+          <div className="flex flex-col items-center">
+            <main className="p-4 max-w-7xl w-full">{children}</main>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </>

@@ -38,7 +38,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateTransaction } from "../_actions/transactions";
 import { toast } from "sonner";
-import { DateToUTCDate } from "@/lib/helpers";
 
 interface Props {
   trigger: ReactNode;
@@ -81,7 +80,10 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
       });
 
       // After creating the transaction, we need to invalidate the overview query which will refetch data in the homepage
-      queryClient.invalidateQueries({ queryKey: ["overview"] });
+      queryClient.invalidateQueries({
+        queryKey: ["categories", "treemap"],
+        exact: false,
+      });
 
       setOpen((prev) => !prev);
     },

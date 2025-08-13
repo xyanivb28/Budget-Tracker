@@ -1,25 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import CreateTransactionDialog from "./_components/CreateTransactionDialog";
-import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import Overview from "./_components/Overview";
+import { currentUser } from "@clerk/nextjs/server";
 
-export default async function DashboardPage() {
+async function DashboardPage() {
   const user = await currentUser();
 
   if (!user) {
     redirect("/sign-in");
   }
 
-  const userSettings = await prisma.userSettings.findUnique({
-    where: {
-      userId: user.id,
-    },
-  });
+  let userSettings = null;
+
+  try {
+    userSettings = await prisma.userSettings.findUnique({
+      where: { userId: user.id },
+    });
+  } catch (err) {
+    console.error("Failed to fetch user settings:", err);
+    throw new Error("Database connection failed");
+  }
 
   if (!userSettings) {
-    redirect("/sign-in");
+    redirect("/wizard");
   }
 
   return (
@@ -35,7 +40,6 @@ export default async function DashboardPage() {
             }
             type="income"
           />
-
           <CreateTransactionDialog
             trigger={
               <Button className="border border-rose-500 bg-rose-950 text-white hover:bg-rose-700 cursor-pointer">
@@ -50,3 +54,5 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
+export default DashboardPage;
