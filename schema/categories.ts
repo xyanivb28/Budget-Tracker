@@ -20,7 +20,7 @@ export const CategoriesStatsQuerySchema = z
     const { from, to } = args;
     const days = differenceInDays(to, from);
 
-    const isValidRange = days > 0 && days < MAX_DATE_RANGE_DAYS;
+    const isValidRange = days >= 0 && days <= MAX_DATE_RANGE_DAYS;
     return isValidRange;
   });
 

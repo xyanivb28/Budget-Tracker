@@ -81,7 +81,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
 
       // After creating the transaction, we need to invalidate the overview query which will refetch data in the homepage
       queryClient.invalidateQueries({
-        queryKey: ["categories", "treemap"],
+        queryKey: ["overview"],
         exact: false,
       });
 

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { OverviewQuerySchema } from "@/schema/overview";
 import { currentUser } from "@clerk/nextjs/server";
+import { endOfDay, startOfDay } from "date-fns";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,11 +21,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(queryParams.error.message, { status: 400 });
   }
 
-  const stats = await getBalanceStats(
-    user.id,
-    queryParams.data.from,
-    queryParams.data.to
-  );
+  const fromDate = startOfDay(queryParams.data.from);
+  const toDate = endOfDay(queryParams.data.to);
+
+  const stats = await getBalanceStats(user.id, fromDate, toDate);
 
   return NextResponse.json(stats);
 }
@@ -34,6 +34,9 @@ export type GetBalanceStatsResponseType = Awaited<
 >;
 
 async function getBalanceStats(userId: string, from: Date, to: Date) {
+  console.log("from", from);
+  console.log("to", to);
+
   const totals = await prisma.transaction.groupBy({
     by: ["type"],
     where: {

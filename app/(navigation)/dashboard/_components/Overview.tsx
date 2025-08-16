@@ -8,6 +8,7 @@ import { MAX_DATE_RANGE_DAYS } from "@/lib/constants";
 import { toast } from "sonner";
 import StatsCards from "./StatsCards";
 import CategoriesCard from "./CategoriesCard";
+import HistoryChartCard from "./HistoryChartCard";
 
 interface Props {
   userSettings: UserSettings;
@@ -41,6 +42,9 @@ export default function Overview({ userSettings }: Props) {
               return;
             }
 
+            console.log("from", from);
+            console.log("to", to);
+
             setDateRange({ from, to });
           }}
           initialDateFrom={dateRange.from}
@@ -50,16 +54,25 @@ export default function Overview({ userSettings }: Props) {
           showCompare={false}
         />
       </header>
-      <StatsCards
-        userSettings={userSettings}
-        from={dateRange.from}
-        to={dateRange.to}
-      />
-      <CategoriesCard
-        userSettings={userSettings}
-        from={dateRange.from}
-        to={dateRange.to}
-      />
+      <main className="h-full">
+        <StatsCards
+          userSettings={userSettings}
+          from={dateRange.from}
+          to={dateRange.to}
+        />
+        <div className="flex flex-col xl:flex-row w-full gap-2">
+          <CategoriesCard
+            userSettings={userSettings}
+            from={dateRange.from}
+            to={dateRange.to}
+          />
+          <HistoryChartCard
+            userSettings={userSettings}
+            from={dateRange.from}
+            to={dateRange.to}
+          />
+        </div>
+      </main>
     </div>
   );
 }

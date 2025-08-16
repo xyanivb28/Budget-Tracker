@@ -16,6 +16,9 @@ interface Props {
 }
 
 export default function StatsCards({ userSettings, from, to }: Props) {
+  console.log("from", from);
+  console.log("to", to);
+
   const { data, isFetching } = useQuery<GetBalanceStatsResponseType>({
     queryKey: ["overview", "stats", from.toISOString(), to.toISOString()],
     queryFn: async () => {

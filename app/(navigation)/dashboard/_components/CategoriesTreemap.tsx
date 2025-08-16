@@ -5,74 +5,31 @@ import { useMemo } from "react";
 import { GetFormatterForCurrency } from "@/lib/helpers";
 import { UserSettings } from "@/lib/generated/prisma";
 import { GetCategoriesStatsResponseType } from "@/app/api/stats/categories/route";
-import { useQuery } from "@tanstack/react-query";
-import { TransactionType } from "@/lib/types";
-import SkeletonWrapper from "@/components/SkeletonWrapper";
 
 interface Props {
   userSettings: UserSettings;
-  selected: TransactionType;
-  from: Date;
-  to: Date;
+  data: GetCategoriesStatsResponseType;
 }
 
-export default function CategoriesTreemap({
-  userSettings,
-  selected,
-  from,
-  to,
-}: Props) {
-  const { data, isFetching } = useQuery<GetCategoriesStatsResponseType>({
-    queryKey: [
-      "categories",
-      "treemap",
-      selected,
-      from.toISOString(),
-      to.toISOString(),
-    ],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/stats/categories?type=${selected}&from=${from.toISOString()}&to=${to.toISOString()}`
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-
-      return res.json();
-    },
-  });
-
+export default function CategoriesTreemap({ userSettings, data }: Props) {
   const formatter = useMemo(
     () => GetFormatterForCurrency(userSettings.currency),
     [userSettings.currency]
   );
 
-  const hasData = Array.isArray(data) && data.length > 0;
-
   return (
-    <SkeletonWrapper isLoading={isFetching}>
-      <div className="w-full h-[350px] sm:w-[300px] sm:h-[300px] flex items-center justify-center">
-        {hasData ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <Treemap
-              data={data}
-              dataKey="size"
-              stroke="none"
-              content={<RoundedCell />}
-              style={{ fill: "transparent", backgroundColor: "transparent" }}
-              animationDuration={300}
-            >
-              <Tooltip content={<CustomTooltip formatter={formatter} />} />
-            </Treemap>
-          </ResponsiveContainer>
-        ) : (
-          <p className="text-muted-foreground text-center">
-            No data to display
-          </p>
-        )}
-      </div>
-    </SkeletonWrapper>
+    <ResponsiveContainer width="100%" height={400}>
+      <Treemap
+        data={data}
+        dataKey="size"
+        stroke="none"
+        content={<RoundedCell />}
+        style={{ fill: "transparent", backgroundColor: "transparent" }}
+        animationDuration={300}
+      >
+        <Tooltip content={<CustomTooltip formatter={formatter} />} />
+      </Treemap>
+    </ResponsiveContainer>
   );
 }
 
@@ -98,13 +55,12 @@ const RoundedCell = ({ x, y, width, height, fill, size, icon }: any) => {
           y={y + height / 2 - 6}
           textAnchor="middle"
           fill="#fff"
-          fontSize={14}
           stroke="none"
         >
-          <tspan x={x + width / 2} dy="0">
+          <tspan x={x + width / 2} dy="0" fontSize={32}>
             {icon}
           </tspan>
-          <tspan x={x + width / 2} dy="16" fontSize={12} fontWeight="lighter">
+          <tspan x={x + width / 2} dy="16" fontSize={14} fontWeight="light">
             {displaySize}
           </tspan>
         </text>

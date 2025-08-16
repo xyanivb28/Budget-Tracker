@@ -15,7 +15,7 @@ export default function SkeletonWrapper({
   if (!isLoading) return children;
 
   return (
-    <Skeleton className={cn(fullWidth && "w-full")}>
+    <Skeleton className={cn(fullWidth && "w-full", "h-full")}>
       <div className="opacity-0">{children}</div>
     </Skeleton>
   );
