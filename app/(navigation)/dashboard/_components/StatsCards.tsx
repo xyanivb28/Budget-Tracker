@@ -16,9 +16,6 @@ interface Props {
 }
 
 export default function StatsCards({ userSettings, from, to }: Props) {
-  console.log("from", from);
-  console.log("to", to);
-
   const { data, isFetching } = useQuery<GetBalanceStatsResponseType>({
     queryKey: ["overview", "stats", from.toISOString(), to.toISOString()],
     queryFn: async () => {
@@ -44,7 +41,7 @@ export default function StatsCards({ userSettings, from, to }: Props) {
     incomesTransactionsAmount + expensesTransactionsAmount;
 
   return (
-    <div className="relative flex w-full flex-wrap gap-2 md:flex-nowrap py-4">
+    <div className="relative flex w-full flex-wrap gap-2 md:flex-nowrap pt-4">
       <SkeletonWrapper isLoading={isFetching}>
         <StatCard
           formatter={formatter}

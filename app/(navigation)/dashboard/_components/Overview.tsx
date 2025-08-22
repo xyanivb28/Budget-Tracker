@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import StatsCards from "./StatsCards";
 import CategoriesCard from "./CategoriesCard";
 import HistoryChartCard from "./HistoryChartCard";
+import TransactionTable from "./TransactionTable";
 
 interface Props {
   userSettings: UserSettings;
@@ -42,9 +43,6 @@ export default function Overview({ userSettings }: Props) {
               return;
             }
 
-            console.log("from", from);
-            console.log("to", to);
-
             setDateRange({ from, to });
           }}
           initialDateFrom={dateRange.from}
@@ -54,7 +52,7 @@ export default function Overview({ userSettings }: Props) {
           showCompare={false}
         />
       </header>
-      <main className="h-full">
+      <main className="flex flex-col gap-4 h-full">
         <StatsCards
           userSettings={userSettings}
           from={dateRange.from}
@@ -72,6 +70,7 @@ export default function Overview({ userSettings }: Props) {
             to={dateRange.to}
           />
         </div>
+        <TransactionTable userSettings={userSettings} />
       </main>
     </div>
   );

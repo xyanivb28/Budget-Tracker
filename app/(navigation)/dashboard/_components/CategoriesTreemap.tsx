@@ -37,6 +37,17 @@ const RoundedCell = ({ x, y, width, height, fill, size, icon }: any) => {
   const gap = 4;
   const displaySize = typeof size === "number" ? Math.round(size) + "%" : null;
 
+  // Define font sizes
+  const fontSizeIcon = 32;
+  const fontSizeDisplay = 14;
+  const gapBetween = 10;
+
+  // Calculate total height needed for icon + displaySize + gap
+  const totalHeight = fontSizeIcon + fontSizeDisplay + gapBetween;
+
+  // Only render if rectangle is wide and tall enough
+  const canRender = width - gap > fontSizeIcon && height - gap > totalHeight;
+
   return (
     <g>
       <rect
@@ -49,18 +60,23 @@ const RoundedCell = ({ x, y, width, height, fill, size, icon }: any) => {
         fill={fill}
         stroke="none"
       />
-      {width > 40 && height > 20 && (
+      {canRender && (
         <text
           x={x + width / 2}
-          y={y + height / 2 - 6}
+          y={y + height / 2 - totalHeight / 2 + fontSizeIcon}
           textAnchor="middle"
           fill="#fff"
           stroke="none"
         >
-          <tspan x={x + width / 2} dy="0" fontSize={32}>
+          <tspan x={x + width / 2} dy="0" fontSize={fontSizeIcon}>
             {icon}
           </tspan>
-          <tspan x={x + width / 2} dy="16" fontSize={14} fontWeight="light">
+          <tspan
+            x={x + width / 2}
+            dy={gapBetween + fontSizeDisplay / 2}
+            fontSize={fontSizeDisplay}
+            fontWeight="light"
+          >
             {displaySize}
           </tspan>
         </text>

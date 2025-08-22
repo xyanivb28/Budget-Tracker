@@ -1,5 +1,6 @@
 import { UserSettings } from "@/lib/generated/prisma";
 import { GetFormatterForCurrency } from "@/lib/helpers";
+import { Timeframe } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 import CountUp from "react-countup";
@@ -13,13 +14,13 @@ import {
   BarChart,
 } from "recharts";
 
-export default function HistoryChart({
-  data,
-  userSettings,
-}: {
+interface Props {
   data: any[] | undefined;
   userSettings: UserSettings;
-}) {
+  timeFrame: Timeframe;
+}
+
+export default function HistoryChart({ data, userSettings, timeFrame }: Props) {
   const formatter = useMemo(() => {
     return GetFormatterForCurrency(userSettings.currency);
   }, [userSettings.currency]);
@@ -51,9 +52,14 @@ export default function HistoryChart({
               stroke="#888888"
               fontSize={12}
               tickLine={false}
-              tickFormatter={(value) =>
-                new Date(0, value).toLocaleString("en-US", { month: "short" })
-              }
+              tickFormatter={(value) => {
+                if (timeFrame === "year") {
+                  return new Date(0, value).toLocaleString("en-US", {
+                    month: "short",
+                  });
+                }
+                return String(value);
+              }}
               axisLine={false}
               padding={{ left: 5, right: 5 }}
             />
@@ -143,12 +149,12 @@ function TooltipRow({
         <p className="text-sm text-muted-foreground">{label}</p>
         <div className={cn("text-sm font-bold", textColor)}>
           <CountUp
+            preserveValue
             formattingFn={(value: number) => formatter.format(value)}
             className="text-sm"
             end={value}
             duration={0.5}
             decimals={0}
-            preserveValue
           />
         </div>
       </div>

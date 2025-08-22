@@ -96,8 +96,8 @@ async function getCategoriesStats(
 
 function generateDistinctColors(n: number): string[] {
   const colors: string[] = [];
-  const saturation = 70;
-  const lightness = 60;
+  const saturation = 50;
+  const lightness = 50;
 
   for (let i = 0; i < n; i++) {
     const hue = Math.round((360 / n) * i);

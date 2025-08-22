@@ -55,6 +55,7 @@ export default function HistoryChartCard({ userSettings, from, to }: Props) {
           <HistoryChart
             data={historyDataQuery.data}
             userSettings={userSettings}
+            timeFrame={timeframe}
           />
         )}
         {!dataAvailable && (

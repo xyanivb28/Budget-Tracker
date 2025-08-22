@@ -15,9 +15,9 @@ import {
 import { Category } from "@/lib/generated/prisma";
 import { TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useIsFetching, useQuery } from "@tanstack/react-query";
 import { CommandEmpty } from "cmdk";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import CreateCategoryDialog from "./CreateCategoryDialog";
 import SkeletonWrapper from "@/components/SkeletonWrapper";
@@ -79,16 +79,19 @@ export default function CategoryPicker({ type, onChange }: Props) {
             onCategoryCreated={handleCategoryCreated}
           />
           <CommandGroup>
-            <CommandEmpty className="flex flex-col items-center justify-center h-full p-2">
-              <p className="text-md">No categories found.</p>
-              <p className="text-sm text-muted-foreground">
-                Tip: try creating a category
-              </p>
-            </CommandEmpty>
-            <SkeletonWrapper isLoading={categories.isFetching}>
-              <CommandList>
-                {categories.data &&
-                  categories.data?.map((category: Category) => (
+            {categories.isFetching && (
+              <LoaderCircle className="animate-spin duration-300 w-full text-center" />
+            )}
+            {!categories.isFetching && (
+              <>
+                <CommandEmpty className="flex flex-col items-center justify-center h-full p-2">
+                  <p className="text-md">No categories found.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Tip: try creating a category
+                  </p>
+                </CommandEmpty>
+                <CommandList>
+                  {categories.data?.map((category: Category) => (
                     <CommandItem
                       key={category.name}
                       onSelect={() => {
@@ -106,8 +109,9 @@ export default function CategoryPicker({ type, onChange }: Props) {
                       />
                     </CommandItem>
                   ))}
-              </CommandList>
-            </SkeletonWrapper>
+                </CommandList>
+              </>
+            )}
           </CommandGroup>
         </Command>
       </PopoverContent>

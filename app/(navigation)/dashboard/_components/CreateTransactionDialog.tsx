@@ -148,9 +148,24 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
                     <Input
                       type="number"
                       {...field}
+                      min={0}
                       value={
-                        field.value !== undefined ? String(field.value) : 0
+                        field.value === undefined ? 0 : String(field.value)
                       }
+                      onFocus={(e) => {
+                        if (field.value === 0 || field.value === undefined) {
+                          field.onChange(undefined);
+                          e.target.value = "";
+                        }
+                      }}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "") {
+                          field.onChange(undefined);
+                        } else {
+                          field.onChange(Number(val));
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormDescription>
