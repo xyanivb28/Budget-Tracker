@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { UserSettings } from "@/lib/generated/prisma";
 import { ChartColumn } from "lucide-react";
 import { useState } from "react";
@@ -18,7 +18,7 @@ interface Props {
   to: Date;
 }
 
-export default function HistoryChartCard({ userSettings, from, to }: Props) {
+export default function HistoryChartCard({ userSettings }: Props) {
   const [timeframe, setTimeframe] = useState<Timeframe>("year");
   const [period, setPeriod] = useState<Period>({
     month: new Date().getMonth(),

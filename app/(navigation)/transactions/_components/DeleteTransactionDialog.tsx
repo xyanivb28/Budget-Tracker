@@ -13,20 +13,43 @@ import {
 import { Button } from "@/components/ui/button";
 import { TransactionDataSchemaType } from "@/schema/transactions";
 import { Row } from "@tanstack/react-table";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { DeleteTransaction } from "../../_actions/transactions";
 
 interface DeleteTransactionDialogProps {
   transaction: TransactionDataSchemaType;
   table: any;
-  onDelete: (ids: string[]) => void;
   children: React.ReactNode;
 }
 
 export function DeleteTransactionDialog({
   transaction,
   table,
-  onDelete,
   children,
 }: DeleteTransactionDialogProps) {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: DeleteTransaction,
+    onMutate: () => {
+      return toast.loading("Deleting transaction(s)...", {
+        id: "delete-transaction",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["overview", "transactions"] });
+      toast.success("Transaction(s) deleted", {
+        id: "delete-transaction",
+      });
+    },
+    onError: () => {
+      toast.error("Failed to delete transaction(s)", {
+        id: "delete-transaction",
+      });
+    },
+  });
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -49,21 +72,19 @@ export function DeleteTransactionDialog({
               type="button"
               variant="destructive"
               className="cursor-pointer"
+              disabled={isPending}
               onClick={async () => {
                 const rows = table.getSelectedRowModel().rows;
-                console.log("selected rows", rows);
 
                 const rowsId: string[] = rows.map(
                   (row: Row<TransactionDataSchemaType>) => row.original.id
                 );
 
-                console.log("rows id", rowsId);
-
                 if (!rowsId.includes(transaction.id)) {
                   rowsId.push(transaction.id);
                 }
 
-                await onDelete(rowsId);
+                mutate(rowsId);
               }}
             >
               Confirm

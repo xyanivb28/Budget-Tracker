@@ -27,3 +27,11 @@ export const CategoriesStatsQuerySchema = z
 export type CategoriesStatsQuerySchemaType = z.infer<
   typeof CategoriesStatsQuerySchema
 >;
+
+export const DeleteCategorySchema = z.object({
+  name: z.string(),
+  icon: z.string(),
+  type: z.enum(["expense", "income"]),
+});
+
+export type DeleteCategorySchemaType = z.infer<typeof DeleteCategorySchema>;

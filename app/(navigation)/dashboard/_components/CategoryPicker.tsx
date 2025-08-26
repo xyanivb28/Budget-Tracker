@@ -15,26 +15,26 @@ import {
 import { Category } from "@/lib/generated/prisma";
 import { TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useIsFetching, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CommandEmpty } from "cmdk";
 import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import CreateCategoryDialog from "./CreateCategoryDialog";
-import SkeletonWrapper from "@/components/SkeletonWrapper";
 
 interface Props {
   type: TransactionType;
   onChange: (value: string) => void;
+  value?: string;
 }
 
-export default function CategoryPicker({ type, onChange }: Props) {
+export default function CategoryPicker({ type, onChange, value }: Props) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [categoryValue, setCategoryValue] = useState(value ?? "");
 
   useEffect(() => {
-    if (!value) return;
-    onChange(value);
-  }, [onChange, value]);
+    if (!categoryValue) return;
+    onChange(categoryValue);
+  }, [onChange, categoryValue]);
 
   const categories = useQuery<Category[]>({
     queryKey: ["categories", type],
@@ -48,10 +48,10 @@ export default function CategoryPicker({ type, onChange }: Props) {
 
   const handleCategoryCreated = useCallback(
     (category: Category) => {
-      setValue(category.name);
+      setCategoryValue(category.name);
       setOpen((prev) => !prev);
     },
-    [setValue, setOpen]
+    [setCategoryValue, setOpen]
   );
 
   return (
@@ -95,7 +95,7 @@ export default function CategoryPicker({ type, onChange }: Props) {
                     <CommandItem
                       key={category.name}
                       onSelect={() => {
-                        setValue(category.name);
+                        setCategoryValue(category.name);
                         setOpen((prev) => !prev);
                       }}
                       className="flex flex-row justify-between"

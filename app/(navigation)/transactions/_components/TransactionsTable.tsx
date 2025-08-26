@@ -7,7 +7,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import CreateTransactionDialog from "../../dashboard/_components/CreateTransactionDialog";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { MAX_DATE_RANGE_DAYS } from "@/lib/constants";
@@ -16,7 +16,6 @@ import { useState } from "react";
 import { Currencies } from "@/lib/currencies";
 import { TransactionDataSchemaType } from "@/schema/transactions";
 import SkeletonWrapper from "@/components/SkeletonWrapper";
-import { DeleteTransaction, EditTransaction } from "../_actions/transactions";
 
 interface Props {
   userSettings: UserSettings;
@@ -27,8 +26,6 @@ export default function TransactionsTable({ userSettings }: Props) {
     from: startOfMonth(new Date()),
     to: new Date(),
   });
-
-  const queryClient = useQueryClient();
 
   // Fetch transactions data query from api
   const { data, isFetching } = useQuery<TransactionDataSchemaType[]>({
@@ -49,39 +46,7 @@ export default function TransactionsTable({ userSettings }: Props) {
     },
   });
 
-  // delete transactions(s) action using react-query useMutation
-  const deleteMutation = useMutation({
-    mutationFn: DeleteTransaction,
-    onMutate: () => {
-      return toast.loading("Deleting transaction(s)...", {
-        id: "delete-transaction",
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["overview", "transactions"] });
-      toast.success("Transaction(s) deleted", {
-        id: "delete-transaction",
-      });
-    },
-    onError: () => {
-      toast.error("Failed to delete transaction(s)", {
-        id: "delete-transaction",
-      });
-    },
-  });
-
-  // delete transaction action using react-query useMutation
-  const editMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await EditTransaction(id);
-    },
-  });
-
-  const columns = getColumns(
-    userSettings.currency,
-    deleteMutation.mutateAsync,
-    editMutation.mutateAsync
-  );
+  const columns = getColumns(userSettings.currency);
 
   const categories = Array.from(
     new Set(data?.map((transaction) => transaction.category))
@@ -98,28 +63,31 @@ export default function TransactionsTable({ userSettings }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-center gap-4">
-        <p className="text-muted-foreground text-md">Select a date range:</p>
-        <DateRangePicker
-          onUpdate={(values) => {
-            const { from, to } = values.range;
-            if (!from || !to) return;
-            if (differenceInDays(to, from) > MAX_DATE_RANGE_DAYS) {
-              toast.error(
-                `The selected date range is too big. Max allowed range is ${MAX_DATE_RANGE_DAYS} days!`
-              );
-              return;
-            }
+      <header className="flex flex-col md:flex-row items-center justify-between gap-4 border-t border-b border-separate py-4 px-4">
+        <h1 className="text-lg font-semibold">Manage your transactions</h1>
+        <div className="flex md:flex-row items-center gap-2">
+          <p className="text-muted-foreground text-md">Select a date range:</p>
+          <DateRangePicker
+            onUpdate={(values) => {
+              const { from, to } = values.range;
+              if (!from || !to) return;
+              if (differenceInDays(to, from) > MAX_DATE_RANGE_DAYS) {
+                toast.error(
+                  `The selected date range is too big. Max allowed range is ${MAX_DATE_RANGE_DAYS} days!`
+                );
+                return;
+              }
 
-            setDateRange({ from, to });
-          }}
-          initialDateFrom={dateRange.from}
-          initialDateTo={dateRange.to}
-          align="start"
-          locale={locale}
-          showCompare={false}
-        />
-      </div>
+              setDateRange({ from, to });
+            }}
+            initialDateFrom={dateRange.from}
+            initialDateTo={dateRange.to}
+            align="start"
+            locale={locale}
+            showCompare={false}
+          />
+        </div>
+      </header>
       <div className="container mx-auto">
         <Card className="p-4 gap-4">
           <header className="flex flex-col md:flex-row md:justify-between gap-2">

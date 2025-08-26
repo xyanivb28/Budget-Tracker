@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { TransactionType } from "@/lib/types";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,15 +23,25 @@ export async function GET(request: NextRequest) {
   }
 
   const type = queryParams.data;
+
+  const categories = await getCategories(user.id, type);
+
+  return NextResponse.json(categories);
+}
+
+async function getCategories(userId: string, type?: TransactionType) {
   const categories = await prisma.category.findMany({
     where: {
-      userId: user.id,
+      userId,
       ...(type && { type }), // include type in the filter if it's defined.
     },
     orderBy: {
       name: "asc",
     },
   });
-
-  return NextResponse.json(categories);
+  return categories;
 }
+
+export type GetCategoriesResponseType = Awaited<
+  ReturnType<typeof getCategories>
+>;

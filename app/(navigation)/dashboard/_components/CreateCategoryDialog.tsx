@@ -30,9 +30,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircleOff, Loader2, PlusSquare } from "lucide-react";
-import { useCallback, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CreateCategory } from "../_actions/categories";
+import { CreateCategory } from "../../_actions/categories";
 import { Category } from "@/lib/generated/prisma";
 import { toast } from "sonner";
 import data from "@emoji-mart/data";
@@ -42,12 +42,14 @@ import { PopoverContent } from "@radix-ui/react-popover";
 
 interface Props {
   type: TransactionType;
-  onCategoryCreated: (category: Category) => void;
+  onCategoryCreated?: (category: Category) => void;
+  TriggerComponent?: ReactNode;
 }
 
 export default function CreateCategoryDialog({
   type,
   onCategoryCreated,
+  TriggerComponent,
 }: Props) {
   const [open, setOpen] = useState(false);
   const form = useForm<CreateCategorySchemaType>({
@@ -75,7 +77,9 @@ export default function CreateCategoryDialog({
         queryKey: ["categories"],
       });
 
-      onCategoryCreated(data);
+      if (onCategoryCreated) {
+        onCategoryCreated(data);
+      }
 
       setOpen((prev) => !prev);
     },
@@ -96,13 +100,17 @@ export default function CreateCategoryDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant={"ghost"}
-          className="flex border-separate justify-start items-center cursor-pointer rounded-none border-b px-3 py-3 text-muted-foreground"
-        >
-          <PlusSquare className="mr-2 h-4 w-4" />
-          Create new
-        </Button>
+        {TriggerComponent ? (
+          TriggerComponent
+        ) : (
+          <Button
+            variant={"ghost"}
+            className="flex border-separate justify-start items-center cursor-pointer rounded-none border-b px-3 py-3 text-muted-foreground"
+          >
+            <PlusSquare className="mr-2 h-4 w-4" />
+            Create new
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

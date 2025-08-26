@@ -28,3 +28,14 @@ export const TransactionsIdSchema = z.object({
 });
 
 export type TransactionsIdSchemaType = z.infer<typeof TransactionsIdSchema>;
+
+export const EditTransactionSchema = z.object({
+  id: z.string(),
+  description: z.string().optional(),
+  date: z.coerce.date(),
+  category: z.string(),
+  amount: z.coerce.number().positive().multipleOf(0.01),
+  type: z.union([z.literal("income"), z.literal("expense")]),
+});
+
+export type EditTransactionSchemaType = z.infer<typeof EditTransactionSchema>;

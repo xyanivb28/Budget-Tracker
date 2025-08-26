@@ -16,15 +16,11 @@ import { DeleteTransactionDialog } from "./DeleteTransactionDialog";
 interface TransactionActionsProps {
   transaction: TransactionDataSchemaType;
   table: any;
-  onDelete: (ids: string[]) => void;
-  onEdit: (id: string) => void;
 }
 
 export function TransactionActions({
   transaction,
   table,
-  onDelete,
-  onEdit,
 }: TransactionActionsProps) {
   return (
     <DropdownMenu>
@@ -35,7 +31,7 @@ export function TransactionActions({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <EditTransactionDialog transaction={transaction} onEdit={onEdit}>
+        <EditTransactionDialog transaction={transaction}>
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             className="cursor-pointer"
@@ -43,11 +39,7 @@ export function TransactionActions({
             Edit
           </DropdownMenuItem>
         </EditTransactionDialog>
-        <DeleteTransactionDialog
-          transaction={transaction}
-          table={table}
-          onDelete={onDelete}
-        >
+        <DeleteTransactionDialog transaction={transaction} table={table}>
           <DropdownMenuItem
             className="text-red-500 cursor-pointer"
             onSelect={(e) => e.preventDefault()}

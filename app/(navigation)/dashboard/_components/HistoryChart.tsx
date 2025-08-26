@@ -1,3 +1,4 @@
+import { HistoryData } from "@/app/api/stats/history-data/route";
 import { UserSettings } from "@/lib/generated/prisma";
 import { GetFormatterForCurrency } from "@/lib/helpers";
 import { Timeframe } from "@/lib/types";
@@ -15,7 +16,7 @@ import {
 } from "recharts";
 
 interface Props {
-  data: any[] | undefined;
+  data: HistoryData[] | undefined;
   userSettings: UserSettings;
   timeFrame: Timeframe;
 }
@@ -52,13 +53,13 @@ export default function HistoryChart({ data, userSettings, timeFrame }: Props) {
               stroke="#888888"
               fontSize={12}
               tickLine={false}
-              tickFormatter={(value) => {
+              dataKey={(data) => {
+                const { year, month, day } = data;
+                const date = new Date(year, month, day || 1);
                 if (timeFrame === "year") {
-                  return new Date(0, value).toLocaleString("en-US", {
-                    month: "short",
-                  });
+                  return date.toLocaleDateString("default", { month: "short" });
                 }
-                return String(value);
+                return date.toLocaleDateString("default", { day: "2-digit" });
               }}
               axisLine={false}
               padding={{ left: 5, right: 5 }}

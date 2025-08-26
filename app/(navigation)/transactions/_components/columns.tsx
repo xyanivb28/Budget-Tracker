@@ -11,9 +11,7 @@ import { TransactionActions } from "./TransactionActions";
 export const columns: ColumnDef<TransactionDataSchemaType>[] = [];
 
 export function getColumns(
-  userCurrency: string | undefined,
-  deleteTransaction: (transactionIds: string[]) => void,
-  editTransaction: (transactionId: string) => void
+  userCurrency: string | undefined
 ): ColumnDef<TransactionDataSchemaType>[] {
   const currencyObj =
     Currencies.find((c) => c.value === userCurrency) ?? Currencies[0];
@@ -120,12 +118,7 @@ export function getColumns(
     {
       id: "actions",
       cell: ({ row, table }) => (
-        <TransactionActions
-          transaction={row.original}
-          table={table}
-          onDelete={deleteTransaction}
-          onEdit={editTransaction}
-        />
+        <TransactionActions transaction={row.original} table={table} />
       ),
     },
   ];

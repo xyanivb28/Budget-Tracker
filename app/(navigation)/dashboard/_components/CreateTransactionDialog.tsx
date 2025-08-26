@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Dialog,
   DialogClose,
@@ -11,12 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import {
-  CreateTransactionSchema,
-  CreateTransactionSchemaType,
-} from "@/schema/transactions";
 import { ReactNode, useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -29,15 +24,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import CategoryPicker from "./CategoryPicker";
-import { PopoverTrigger } from "@radix-ui/react-popover";
-import { Popover, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateTransaction } from "../_actions/transactions";
+import { CreateTransaction } from "../../_actions/transactions";
 import { toast } from "sonner";
+import { DateToUTCDate } from "@/lib/helpers";
+import {
+  CreateTransactionSchema,
+  CreateTransactionSchemaType,
+} from "@/schema/transactions";
 
 interface Props {
   trigger: ReactNode;
@@ -47,8 +50,10 @@ interface Props {
 export default function CreateTransactionDialog({ trigger, type }: Props) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
-    resolver: zodResolver(CreateTransactionSchema),
+  const form = useForm<CreateTransactionSchemaType>({
+    resolver: zodResolver(
+      CreateTransactionSchema
+    ) as Resolver<CreateTransactionSchemaType>,
     defaultValues: {
       type,
       date: new Date(),
@@ -76,7 +81,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
         description: "",
         amount: 0,
         date: new Date(),
-        category: undefined,
+        category: "",
       });
 
       // After creating the transaction, we need to invalidate the overview query which will refetch data in the homepage
@@ -98,6 +103,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
 
       mutate({
         ...values,
+        date: DateToUTCDate(values.date),
       });
     },
     [mutate]
@@ -121,6 +127,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
             transaction
           </DialogTitle>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -145,35 +152,16 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      min={0}
-                      value={
-                        field.value === undefined ? 0 : String(field.value)
-                      }
-                      onFocus={(e) => {
-                        if (field.value === 0 || field.value === undefined) {
-                          field.onChange(undefined);
-                          e.target.value = "";
-                        }
-                      }}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === "") {
-                          field.onChange(undefined);
-                        } else {
-                          field.onChange(Number(val));
-                        }
-                      }}
-                    />
+                    <Input placeholder="0" type="number" {...field} />
                   </FormControl>
                   <FormDescription>
                     Transaction amount (required)
                   </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <div className="flex flex-col md:flex-row items-start justify-between gap-2">
               <FormField
                 control={form.control}
@@ -183,6 +171,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
                     <FormLabel>Category</FormLabel>
                     <FormControl>
                       <CategoryPicker
+                        {...field}
                         type={type}
                         onChange={handleCategoryChange}
                       />
@@ -193,24 +182,25 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>Transaction date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            variant="outline"
                             className={cn(
                               "w-[200px] pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
-                            {field.value && field.value instanceof Date ? (
-                              format(field.value, "PPP")
+                            {field.value ? (
+                              format(field.value as Date, "PPP")
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -221,8 +211,8 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value as Date}
-                          onSelect={field.onChange}
+                          selected={field.value as Date | undefined}
+                          onSelect={(date) => field.onChange(date)}
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
@@ -252,6 +242,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
             className="cursor-pointer"
             onClick={form.handleSubmit(onSubmit)}
             disabled={isPending}
+            type="submit"
           >
             {isPending ? <Loader2 className="animate-spin " /> : "Create"}
           </Button>
