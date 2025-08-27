@@ -97,8 +97,8 @@ export default function CategoriesCard({ type, onErrorFetching }: Props) {
           }
         />
       </header>
-      <SkeletonWrapper isLoading={isFetching}>
-        <main className="flex flex-row flex-wrap gap-2 p-2 min-h-32">
+      <main className="flex flex-row flex-wrap gap-2 p-2">
+        <SkeletonWrapper isLoading={isFetching}>
           {hasData &&
             data.map((category) => (
               <Card
@@ -136,8 +136,8 @@ export default function CategoriesCard({ type, onErrorFetching }: Props) {
               </p>
             </div>
           )}
-        </main>
-      </SkeletonWrapper>
+        </SkeletonWrapper>
+      </main>
     </Card>
   );
 }
