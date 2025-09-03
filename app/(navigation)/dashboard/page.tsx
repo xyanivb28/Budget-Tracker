@@ -34,7 +34,7 @@ async function DashboardPage() {
         <div className="flex flex-row gap-4">
           <CreateTransactionDialog
             trigger={
-              <Button className="border border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 cursor-pointer">
+              <Button className="rounded-[6px] border border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 cursor-pointer">
                 New income
               </Button>
             }
@@ -42,7 +42,7 @@ async function DashboardPage() {
           />
           <CreateTransactionDialog
             trigger={
-              <Button className="border border-rose-500 bg-rose-950 text-white hover:bg-rose-700 cursor-pointer">
+              <Button className="rounded-[6px] border border-rose-500 bg-rose-950 text-white hover:bg-rose-700 cursor-pointer">
                 New expense
               </Button>
             }

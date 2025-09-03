@@ -15,13 +15,40 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-        
 
+model Account {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
-model UserSettings {
-  userId String @id
-  currency String
+  transactions Transaction[]
 }
+
+
+model Transaction {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  amount      Float
+  description String
+  date        DateTime
+  type        String   @default("income")
+
+  // 🔑 Relation to Account
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id])
+
+  // Category info
+  category     String
+  categoryIcon String
+
+  // Keep userId too if you want easy user-level queries
+  userId      String
+}
+
 
 model Category {
   createdAt DateTime @default(now())
@@ -33,20 +60,12 @@ model Category {
   @@unique([name, userId, type, icon])
 }
 
-model Transaction {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
 
-  amount Float
-  description String
-  date DateTime
-  userId String
-  type String @default("income")
-
-  category String
-  categoryIcon String
+model UserSettings {
+  userId String @id
+  currency String
 }
+
 
 model MonthHistory {
   userId String

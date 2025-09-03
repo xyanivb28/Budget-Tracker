@@ -84,6 +84,7 @@ const PRESETS: Preset[] = [
   { name: "lastWeek", label: "Last Week" },
   { name: "thisMonth", label: "This Month" },
   { name: "lastMonth", label: "Last Month" },
+  { name: "lastThreeMonths", label: "Last 3 Months" },
 ];
 
 /** The DateRangePicker component allows a user to select a range of dates */
@@ -197,6 +198,11 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
         from.setDate(1);
         from.setHours(0, 0, 0, 0);
         to.setDate(0);
+        to.setHours(23, 59, 59, 999);
+        break;
+      case "lastThreeMonths":
+        from.setDate(from.getDate() - 89);
+        from.setHours(0, 0, 0, 0);
         to.setHours(23, 59, 59, 999);
         break;
     }
@@ -344,7 +350,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
       }}
     >
       <PopoverTrigger asChild>
-        <Button size={"lg"} variant="outline">
+        <Button size={"lg"} variant="outline" className="cursor-pointer">
           <div className="text-right">
             <div className="py-1">
               <div>{`${formatDate(range.from, locale)}${
@@ -543,6 +549,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
         </div>
         <div className="flex justify-end gap-2 py-2 pr-4">
           <Button
+            className="cursor-pointer"
             onClick={() => {
               setIsOpen(false);
               resetValues();
@@ -552,6 +559,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
             Cancel
           </Button>
           <Button
+            className="cursor-pointer"
             onClick={() => {
               setIsOpen(false);
               if (

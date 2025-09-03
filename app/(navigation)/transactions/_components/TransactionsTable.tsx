@@ -100,7 +100,7 @@ export default function TransactionsTable({ userSettings }: Props) {
                 trigger={
                   <Button
                     size={"sm"}
-                    className="border border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 cursor-pointer"
+                    className="rounded-[6px] border border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 cursor-pointer"
                   >
                     Add Income
                   </Button>
@@ -111,7 +111,7 @@ export default function TransactionsTable({ userSettings }: Props) {
                 trigger={
                   <Button
                     size={"sm"}
-                    className="border border-rose-500 bg-rose-950 text-white hover:bg-rose-700 cursor-pointer"
+                    className="rounded-[6px] border border-rose-500 bg-rose-950 text-white hover:bg-rose-700 cursor-pointer"
                   >
                     Add Expense
                   </Button>
