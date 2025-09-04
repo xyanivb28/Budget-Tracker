@@ -1,5 +1,3 @@
-"use client";
-
 import {
   SidebarProvider,
   SidebarInset,
@@ -9,12 +7,33 @@ import { AppSidebar } from "./(components)/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Breadcrumb, BreadcrumbList } from "@/components/ui/breadcrumb";
 import BreadCrumbs from "@/components/BreadCrumbs";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
 
-export default function NavigationLayout({
+export default async function NavigationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // if user settings do not exist redirect to wizard
+  // if user does not have an account redirect to wizard
+  const user = await currentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const userSettings = await prisma.userSettings.findFirst({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!userSettings) {
+    redirect("/wizard");
+  }
+
   return (
     <>
       <SidebarProvider>

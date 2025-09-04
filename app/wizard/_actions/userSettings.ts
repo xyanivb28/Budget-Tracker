@@ -1,32 +1,63 @@
 "use server";
 
+import { Currency } from "@/lib/currencies";
 import prisma from "@/lib/prisma";
-import { UpdateUserCurrencySchema } from "@/schema/userSettings";
+import {
+  defaultAccountSchema,
+  defaultAccountSchemaType,
+} from "@/schema/accounts";
+import { currencySchema } from "@/schema/userSettings";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export async function UpdateUserCurrency(currency: string) {
-  const parsedBody = UpdateUserCurrencySchema.safeParse({
-    currency,
-  });
-
-  if (!parsedBody.success) {
-    throw parsedBody.error;
-  }
-
+export async function createUserSettings({
+  account,
+  selectedCurrency,
+}: {
+  account: defaultAccountSchemaType;
+  selectedCurrency: Currency;
+}) {
   const user = await currentUser();
+
   if (!user) {
     redirect("/sign-in");
   }
 
-  const userSettings = await prisma.userSettings.update({
-    where: {
-      userId: user.id,
-    },
+  const parsedAccount = defaultAccountSchema.safeParse(account);
+
+  if (!parsedAccount.success) {
+    throw parsedAccount.error;
+  }
+
+  const parsedCurrency = currencySchema.safeParse(selectedCurrency);
+
+  if (!parsedCurrency.success) {
+    throw parsedCurrency.error;
+  }
+
+  const { name } = parsedAccount.data;
+  const { value } = parsedCurrency.data;
+
+  const existing = await prisma.userSettings.findUnique({
+    where: { userId: user.id },
+  });
+
+  if (existing) {
+    redirect("/dashboard");
+  }
+
+  const userSettings = await prisma.userSettings.create({
     data: {
-      currency,
+      userId: user.id,
+      currency: value,
+      defaultAccount: {
+        create: {
+          name: name,
+          userId: user.id,
+        },
+      },
     },
   });
 
-  return userSettings;
+  redirect("/dashboard");
 }

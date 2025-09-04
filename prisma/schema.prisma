@@ -25,6 +25,8 @@ model Account {
   updatedAt DateTime @default(now())
 
   transactions Transaction[]
+
+  userSettings UserSettings?
 }
 
 
@@ -45,7 +47,6 @@ model Transaction {
   category     String
   categoryIcon String
 
-  // Keep userId too if you want easy user-level queries
   userId      String
 }
 
@@ -64,6 +65,9 @@ model Category {
 model UserSettings {
   userId String @id
   currency String
+  
+  accountId      String    @unique   // FK, each account can only be linked once
+  defaultAccount Account   @relation(fields: [accountId], references: [id])
 }
 
 
