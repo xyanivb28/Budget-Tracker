@@ -4,6 +4,7 @@ import CreateTransactionDialog from "./_components/CreateTransactionDialog";
 import prisma from "@/lib/prisma";
 import Overview from "./_components/Overview";
 import { currentUser } from "@clerk/nextjs/server";
+import { AccountsComboBox } from "./_components/AccountsComboBox";
 
 async function DashboardPage() {
   const user = await currentUser();
@@ -30,7 +31,13 @@ async function DashboardPage() {
   return (
     <div className="flex flex-col">
       <header className="flex md:flex-row flex-col border-t-1 border-b-1 border-border h-fit w-full items-center justify-between p-4 gap-4">
-        <h1 className="text-2xl">Hello, {user.firstName} 👋</h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl">Hello, {user.firstName} 👋</h1>
+          <div className="flex flex-row gap-2 items-center">
+            <p>Account:</p>
+            <AccountsComboBox userSettings={userSettings} />
+          </div>
+        </div>
         <div className="flex flex-row gap-4">
           <CreateTransactionDialog
             trigger={

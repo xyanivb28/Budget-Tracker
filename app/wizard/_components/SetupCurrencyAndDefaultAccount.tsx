@@ -25,7 +25,7 @@ import {
 } from "@/schema/accounts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { createUserSettings } from "../_actions/userSettings";
 import { toast } from "sonner";
@@ -64,11 +64,14 @@ export default function SetupCurrencyAndDefaultAccount() {
     },
   });
 
-  const onSubmit = (values: defaultAccountSchemaType) => {
-    if (!selectedOption) return;
+  const onSubmit = useCallback(
+    (values: defaultAccountSchemaType) => {
+      if (!selectedOption) return;
 
-    mutate({ account: values, selectedCurrency: selectedOption });
-  };
+      mutate({ account: values, selectedCurrency: selectedOption });
+    },
+    [mutate, selectedOption]
+  );
 
   return (
     <Card className="w-full">
