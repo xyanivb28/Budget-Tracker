@@ -36,7 +36,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateTransaction } from "../../_actions/transactions";
 import { toast } from "sonner";
-import { DateToUTCDate } from "@/lib/helpers";
+import { DateToUTCDateStartOfDay } from "@/lib/helpers";
 import {
   CreateTransactionSchema,
   CreateTransactionSchemaType,
@@ -103,7 +103,7 @@ export default function CreateTransactionDialog({ trigger, type }: Props) {
 
       mutate({
         ...values,
-        date: DateToUTCDate(values.date),
+        date: DateToUTCDateStartOfDay(values.date),
       });
     },
     [mutate]

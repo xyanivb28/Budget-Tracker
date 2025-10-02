@@ -49,7 +49,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { TransactionType } from "@/lib/types";
-import { DateToUTCDate } from "@/lib/helpers";
+import { DateToUTCDateStartOfDay } from "@/lib/helpers";
 import { EditTransaction } from "../../_actions/transactions";
 
 interface EditTransactionDialogProps {
@@ -118,7 +118,7 @@ export function EditTransactionDialog({
     (data: EditTransactionSchemaType) => {
       mutate({
         ...data,
-        date: DateToUTCDate(data.date),
+        date: DateToUTCDateStartOfDay(data.date),
       });
     },
     [mutate]

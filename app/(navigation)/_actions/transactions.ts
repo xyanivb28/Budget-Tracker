@@ -12,14 +12,14 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export async function CreateTransaction(form: CreateTransactionSchemaType) {
-  const parsedBody = CreateTransactionSchema.safeParse(form);
-  if (!parsedBody.success) {
-    throw new Error(parsedBody.error.message);
-  }
-
   const user = await currentUser();
   if (!user) {
     redirect("/sign-in");
+  }
+
+  const parsedBody = CreateTransactionSchema.safeParse(form);
+  if (!parsedBody.success) {
+    throw new Error(parsedBody.error.message);
   }
 
   const { amount, category, date, description, type } = parsedBody.data;
@@ -214,6 +214,18 @@ export async function EditTransaction(
     throw new Error("Transaction not found");
   }
 
+  // Get the category icon for the new category
+  const categoryRow = await prisma.category.findFirst({
+    where: {
+      userId: user.id,
+      name: category,
+    },
+  });
+
+  if (!categoryRow) {
+    throw new Error("category not found");
+  }
+
   const operations: any[] = [
     // Update existing transaction
     prisma.transaction.update({
@@ -225,6 +237,7 @@ export async function EditTransaction(
         description,
         date,
         category,
+        categoryIcon: categoryRow.icon,
         amount,
         type,
       },
